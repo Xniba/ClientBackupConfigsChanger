@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO.Compression;
+using System.Runtime.CompilerServices;
 
 namespace ClientBackupConfigsChanger
 {
@@ -391,9 +392,11 @@ namespace ClientBackupConfigsChanger
             }
 
         }
-        static void CloseApp()
+        static void CloseApp([CallerMemberName] string nazwaMetody = "")
         {
-            Console.WriteLine("Press Enter to close app");
+            Debug.WriteLine($"!!!There was a problem in method: {nazwaMetody}");
+
+            Console.WriteLine("\nPress Enter to close app");
             Console.ReadKey();
             Environment.Exit(0);
         }
@@ -409,6 +412,7 @@ namespace ClientBackupConfigsChanger
                 Console.WriteLine("!!!Wrong value");
                 CloseApp();
             }
+
             return 0;
         }
         static string GetPathToFilesDirectory()
