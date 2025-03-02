@@ -410,6 +410,8 @@ namespace ClientBackupConfigsChanger
             {
                 Console.BackgroundColor = ConsoleColor.Red;
                 Console.WriteLine("!!!Wrong value");
+                Console.ResetColor();
+
                 CloseApp();
             }
 
@@ -432,7 +434,7 @@ namespace ClientBackupConfigsChanger
                 return path;
             }
         }
-        static void GoToTryAgain(string readedFromKeyboard)
+        static void GotoTryWriteAgain(string readedFromKeyboard)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"!!!Somethinks go wrong, you write: {readedFromKeyboard}");
@@ -487,14 +489,14 @@ namespace ClientBackupConfigsChanger
             }
             catch
             {
-                GoToTryAgain(readedFromKeyboard);
+                GotoTryWriteAgain(readedFromKeyboard);
                 goto TryAgain;
             }
 
             // Check range
             if ((option < 0) || (option > nameOfOptions.Length - 1)) //pseudo Default
             {
-                GoToTryAgain(option.ToString());
+                GotoTryWriteAgain(option.ToString());
                 goto TryAgain;
             }
             // Display
@@ -506,7 +508,6 @@ namespace ClientBackupConfigsChanger
 
             return option;
         }
-
         // Main porogram
         static void Main(string[] args)
         {
@@ -522,7 +523,7 @@ namespace ClientBackupConfigsChanger
 
             string zipBaseFilePath = FindFileWithExtension(baseDirectoryPath, "*.zip");                         //Path to zip, to unpack
             string newDirectoryPathUnzip = newDirectoryPath + @"\ConfigPack";                                   //New Directory to unziped ConifgPack. Additionaly "\ConfigPack" is for correnct hierarchy after ZIP it
-            string scalanceConfPath = newDirectoryPathUnzip + @"\ConfigPack\Config\config_SCALANCE_W700.conf";  //Path to conifg file
+            string scalanceConfFilePath = newDirectoryPathUnzip + @"\ConfigPack\Config\config_SCALANCE_W700.conf";  //Path to conifg file
 
 
             //Lines to change in config file 
@@ -536,9 +537,9 @@ namespace ClientBackupConfigsChanger
             ZipFile.ExtractToDirectory(zipBaseFilePath, newDirectoryPathUnzip);
 
             // 3. Read lines from config
-            string[] sortedValues = ReadAndSort(scalanceConfPath, linesToRead);
-            // 4. Create rest zip's with changed values
+            string[] sortedValues = ReadAndSort(scalanceConfFilePath, linesToRead);
 
+            // 4. Create rest zip's with changed values
             switch (option)
             {
                 case 1: //only Up
@@ -558,7 +559,7 @@ namespace ClientBackupConfigsChanger
                     Console.WriteLine($"Config for carrier {sortedValues[0]}{sortedValues[1]} saved");
 
                     // 4.4. run machine
-                    ChangingMachineUp(newDirectoryPathUnzip, newDirectoryPath, scalanceConfPath, sortedValues, linesToRead, amountOfCarriers);
+                    ChangingMachineUp(newDirectoryPathUnzip, newDirectoryPath, scalanceConfFilePath, sortedValues, linesToRead, amountOfCarriers);
                     break;
 
                 case 2: //Only Down
@@ -575,7 +576,7 @@ namespace ClientBackupConfigsChanger
                     amountOfCarriers = Int32.Parse(sortedValues[1]); //read number of carrier
 
                     // 4.4. 
-                    ChangingMachineDown(newDirectoryPathUnzip, newDirectoryPath, scalanceConfPath, sortedValues, linesToRead, amountOfCarriers);
+                    ChangingMachineDown(newDirectoryPathUnzip, newDirectoryPath, scalanceConfFilePath, sortedValues, linesToRead, amountOfCarriers);
                     break;
 
                 case 3: //Up and down
@@ -594,13 +595,13 @@ namespace ClientBackupConfigsChanger
 
                     //
                     Console.WriteLine($"Calculating Up from {sortedValues[0]}{sortedValues[1]}");
-                    ChangingMachineUp(newDirectoryPathUnzip, newDirectoryPath, scalanceConfPath, sortedValues, linesToRead, amountOfCarriers);
+                    ChangingMachineUp(newDirectoryPathUnzip, newDirectoryPath, scalanceConfFilePath, sortedValues, linesToRead, amountOfCarriers);
 
                     //
                     Console.WriteLine();
                     Console.WriteLine($"Calculating Down from {sortedValues[0]}{sortedValues[1]}");
                     amountOfCarriers = Int32.Parse(sortedValues[1]); //read number of carrier
-                    ChangingMachineDown(newDirectoryPathUnzip, newDirectoryPath, scalanceConfPath, sortedValues, linesToRead, amountOfCarriers);
+                    ChangingMachineDown(newDirectoryPathUnzip, newDirectoryPath, scalanceConfFilePath, sortedValues, linesToRead, amountOfCarriers);
                     break;
 
                 default:
